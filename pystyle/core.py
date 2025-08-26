@@ -1,4 +1,3 @@
-import tkinter as tk
 from tkinter import ttk
 
 
@@ -38,6 +37,7 @@ class StyleFactory:
         self.style.configure(
             'TCheckbutton',
             font=buttonFont,
+            padding=6,
             background=colors[0],
             foreground=colors[3],
             indicatorcolor=colors[0]
@@ -49,13 +49,15 @@ class StyleFactory:
         self.style.configure(
             'TCombobox',
             background=colors[0],
+            foreground=colors[1],
             fieldbackground=colors[1],
             font=optionFont,
             padding=5
         )
         self.style.map(
             'TCombobox',
-            fieldbackground=[('readonly', colors[1])]
+            fieldbackground=[('readonly', colors[1])],
+            background=[('active', colors[1])]
         )
         self.style.configure(
             'TEntry',
@@ -72,15 +74,7 @@ class StyleFactory:
             background=colors[0]
         )
         self.style.configure(
-            'TLabel',
-            font=bodyFont
-        )
-        self.style.configure(
-            'TLabelFrame',
-            font=bodyFont
-        )
-        self.style.configure(
-            'TLabelFrame.Label',
+            'TLabel' and 'TLabelFrame' and 'TLabelFrame.Label',
             font=bodyFont
         )
         self.style.configure(
@@ -89,6 +83,10 @@ class StyleFactory:
         )
         self.style.map(
             'TMenubutton',
+            background=[('active', colors[1]), ('pressed', colors[0])]
+        )
+        self.style.map(
+            'TRadiobutton',
             background=[('active', colors[1]), ('pressed', colors[0])]
         )
         self.style.configure(
@@ -114,17 +112,21 @@ class StyleFactory:
             font=buttonFont,
             background=colors[0]
         )
-        self.style.map(
-            'TRadiobutton',
-            background=[('active', colors[1]), ('pressed', colors[0])]
-        )
         self.style.configure(
             'TScale',
             background=colors[0],
         )
+        self.style.map(
+            'TScale',
+            background=[('active', colors[1])]
+        )
         self.style.configure(
-            'TScrollBar',
+            'TScrollbar',
             arrowsize=15
+        )
+        self.style.map(
+            'TScrollbar',
+            background=[('active', colors[1])]
         )
         self.style.configure(
             'Treeview',
@@ -140,6 +142,14 @@ class StyleFactory:
             background=colors[1],
             fieldbackground=colors[1],
             font=buttonFont
+        )
+        self.style.map(
+            'Treeview',
+            background=[('selected', colors[0])]
+        )
+        self.style.map(
+            'Treeview.Heading',
+            background=[('active', colors[0])]
         )
         
     
@@ -166,10 +176,13 @@ class StyleFactory:
         
     def treeview_static(event):
         for widget in treeviewList:
-            if widget.identify_region(event.x, event.y) == "separator":
-                return "break"
-
-
+            try:
+                if widget.identify_region(event.x, event.y) == "separator":
+                    return "break"
+            except:
+                treeviewList.remove(widget)
+                continue
+            
 
     def update_children(self, parent):
         for child in parent.winfo_children():
@@ -184,8 +197,3 @@ class StyleFactory:
                 print(f"Error refreshing child widget: {e}")
             if child.winfo_children():
                  self.update_children
-
-    def _darken_color(self, hex_color, factor = 0.8): 
-        rgb=tuple(int(hex_color[i,i+2], 16) for i in (1, 3, 5))
-        darkened=tuple(max(0, min(255, int(c*factor))) for c in rgb)
-        return "#{:02x}{:02x}{:02x}".format(*darkened)
