@@ -856,3 +856,6 @@ def run_settings(root):
     style=ttk.Style()
     st.update_styles(root, colors)
     root.protocol("WM_DELETE_WINDOW", on_closing)
+
+if __name__ == '__main__':
+    launch_settings()
